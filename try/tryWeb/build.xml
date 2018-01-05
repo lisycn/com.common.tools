@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<project name="tryWeb" default="war" basedir=".">
+	<description>tryWeb打包</description>
+  	<property file="build.properties" />
+  	<property file="../common/build.properties" />
+  	<property file="../service/build.properties" />
+	
+	<target name="depend.deploy">
+		<echo>tryWeb_depend.deploy start...</echo>
+		<ant dir="../common" />
+		<ant dir="../service" />
+		<echo>tryWeb_depend.deploy end...</echo>
+	</target>
+
+
+	<target name="clean" depends="depend.deploy" unless="is.all">
+		<echo>tryWeb_clean start...</echo>
+		<delete dir="${tryWeb.path.dist}" />
+		<echo>tryWeb_clean end...</echo>
+	</target>
+	
+	<target name="init" depends="clean">
+		<echo>tryWeb_init start...</echo>
+		<mkdir dir="${tryWeb.path.build}"/>
+		<mkdir dir="${tryWeb.path.deploy}"/>
+		
+		<echo>tryWeb_init end...</echo>
+	</target>
+		
+	<target name="compile" depends="init">
+		<echo>tryWeb_compile start...</echo>
+		<javac srcdir="${tryWeb.path.src}" destdir="${tryWeb.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<fileset dir="${lib.path.lib}">
+					</fileset>
+					<pathelement location="${common.file.jar}"/>
+					<pathelement location="${service.file.jar}"/>
+				</path>
+			</classpath>
+  		</javac>
+		<copy todir="${tryWeb.path.build}">
+			<fileset dir="${tryWeb.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>tryWeb_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>tryWeb_deploy start...</echo>
+		
+		<!-- copy common工程的jar包到lib -->
+		<copy todir="${tryWeb.path.deploy.lib}" file="${common.file.jar}">
+		</copy>		
+		<!-- copy service工程的jar包到lib -->
+		<copy todir="${tryWeb.path.deploy.lib}" file="${service.file.jar}">
+		</copy>
+		
+		<!--copy lib工程 的 lib-->
+		<copy todir="${tryWeb.path.deploy.lib}">
+			<fileset dir="${lib.path.lib}">				
+			</fileset>
+		</copy>
+		<!-- copy 本工程 类 文件 -->
+		<copy todir="${tryWeb.path.deploy.classes}" overwrite="true">
+			<fileset dir="${tryWeb.path.build}">
+			</fileset>
+		</copy>
+		<!-- copy 本工程 web 文件 -->
+		<copy todir="${tryWeb.path.deploy}" overwrite="true">
+			<fileset dir="${tryWeb.path.web}">
+			</fileset>
+		</copy>
+		
+		<echo>tryWeb_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>tryWeb_war start...</echo>
+		
+		<antcall target="war.dev" />
+		<antcall target="war.test" />
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>tryWeb_war end...</echo>
+	</target>
+	
+	<!--开发环境打包 -->
+	<target name="war.dev" if="is.war.dev">
+		<war destfile="${tryWeb.file.war}" basedir="${tryWeb.path.deploy}" >
+		</war>
+		<echo>war dist:${tryWeb.file.war}</echo>
+	</target>
+	
+	<!--test环境打包 -->
+	<target name="war.test" if="is.war.test">
+		<copy todir="${tryWeb.path.deploy}" overwrite="true">
+			<fileset dir="${tryWeb.path.config.test}">
+			</fileset>
+		</copy>
+		<war destfile="${tryWeb.file.war.test}" basedir="${tryWeb.path.deploy}" >
+		</war>
+		<echo>war dist:${tryWeb.file.war.test}</echo>
+	</target>
+	
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${tryWeb.path.deploy}" overwrite="true">
+			<fileset dir="${tryWeb.path.config.sit}">
+			</fileset>
+		</copy>
+		<war destfile="${tryWeb.file.war.sit}" basedir="${tryWeb.path.deploy}" >
+		</war>
+		<echo>war dist:${tryWeb.file.war.sit}</echo>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${tryWeb.path.deploy}" overwrite="true">
+			<fileset dir="${tryWeb.path.config.uat}">
+			</fileset>
+		</copy>
+		<war destfile="${tryWeb.file.war.uat}" basedir="${tryWeb.path.deploy}" >
+		</war>
+		<echo>war dist:${tryWeb.file.war.uat}</echo>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${tryWeb.path.deploy}" overwrite="true">
+			<fileset dir="${tryWeb.path.config.prod}">
+			</fileset>
+		</copy>
+		<war destfile="${tryWeb.file.war.prod}" basedir="${tryWeb.path.deploy}" >
+		</war>
+		<echo>war dist:${tryWeb.file.war.prod}</echo>
+	</target>
+</project>

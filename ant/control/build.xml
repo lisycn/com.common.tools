@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<project name="control" default="war" basedir=".">
+	<description>control打包</description>
+  	<property file="build.properties" />
+  	<property file="../common/build.properties" />
+	
+	<target name="depend.deploy">
+		<echo>control_depend.deploy start...</echo>
+		<ant dir="../common" />
+		<echo>control_depend.deploy end...</echo>
+	</target>
+
+
+	<target name="clean" depends="depend.deploy">
+		<echo>control_clean start...</echo>
+		<delete dir="${control.path.dist}" />
+		<echo>control_clean end...</echo>
+	</target>
+	<target name="init" depends="clean">
+		<echo>control_init start...</echo>
+		<mkdir dir="${control.path.build}"/>
+		<echo>control_init end...</echo>
+	</target>
+	<target name="compile" depends="init">
+		<echo>control_compile start...</echo>
+		<javac srcdir="${control.path.src}" destdir="${control.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${control.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<pathelement location="${common.file.jar}"/>
+				</path>
+			</classpath>
+  		</javac>
+		<copy todir="${control.path.build}">
+			<fileset dir="${control.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>control_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>control_deploy start...</echo>
+		<!-- copy common工程的jar包到lib -->
+		<copy todir="${control.path.deploy.lib}" file="${common.file.jar}">
+		</copy>
+		<!-- copy 本工程 类 文件 -->
+		<copy todir="${control.path.deploy.classes}" overwrite="true">
+			<fileset dir="${control.path.build}">
+			</fileset>
+		</copy>
+		<!-- copy 本工程 web 文件 -->
+		<copy todir="${control.path.deploy}" overwrite="true">
+			<fileset dir="${control.path.web}">
+			</fileset>
+		</copy>
+		
+		<echo>control_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>control_war start...</echo>
+		<!--开发环境打包 -->
+		<war destfile="${control.file.war}" basedir="${control.path.deploy}" >
+		</war>
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>control_war end...</echo>
+	</target>
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${control.path.deploy}" overwrite="true">
+			<fileset dir="${control.path.config.sit}">
+			</fileset>
+		</copy>
+		<war destfile="${control.file.war.sit}" basedir="${control.path.deploy}" >
+		</war>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${control.path.deploy}" overwrite="true">
+			<fileset dir="${control.path.config.uat}">
+			</fileset>
+		</copy>
+		<war destfile="${control.file.war.uat}" basedir="${control.path.deploy}" >
+		</war>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${control.path.deploy}" overwrite="true">
+			<fileset dir="${control.path.config.prod}">
+			</fileset>
+		</copy>
+		<war destfile="${control.file.war.prod}" basedir="${control.path.deploy}" >
+		</war>
+	</target>
+</project>

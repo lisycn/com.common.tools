@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<project name="fbs" default="war" basedir=".">
+	<description>fbs打包</description>
+  	<property file="build.properties" />
+  	<property file="../app/build.properties" />
+  	<property file="../web/build.properties" />
+	
+	<target name="depend.deploy">
+		<echo>fbs_depend.deploy start...</echo>
+		<ant dir="../web" />
+		<echo>fbs_depend.deploy end...</echo>
+	</target>
+
+
+	<target name="clean" depends="depend.deploy">
+		<echo>fbs_clean start...</echo>
+		<delete dir="${fbs.path.dist}" />
+		<echo>fbs_clean end...</echo>
+	</target>
+	<target name="init" depends="clean">
+		<echo>fbs_init start...</echo>
+		<mkdir dir="${fbs.path.build}"/>
+		<echo>fbs_init end...</echo>
+	</target>
+	<target name="compile" depends="init">
+		<echo>fbs_compile start...</echo>
+		<javac srcdir="${fbs.path.src}" destdir="${fbs.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${app.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<pathelement location="${app.file.jar}"/>
+					<pathelement location="${web.file.jar}"/>
+				</path>
+			</classpath>
+  		</javac>
+		<copy todir="${fbs.path.build}">
+			<fileset dir="${fbs.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>fbs_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>fbs_deploy start...</echo>
+		<!--copy app 中的页面-->
+		<copy todir="${fbs.path.deploy}">
+			<fileset dir="${app.path.deploy}">
+			    <exclude name="**/*context.xml"/>
+			    <exclude name="**/*.properties"/>
+			    <exclude name="**/*.xml"/>
+			    <exclude name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<!-- copy web工程的jar包到lib -->
+		<copy todir="${fbs.path.deploy.lib}" file="${web.file.jar}">
+		</copy>
+
+		<!--copy app 的 lib-->
+		<copy todir="${fbs.path.deploy.lib}">
+			<fileset dir="${app.path.lib}">				
+			</fileset>
+		</copy>
+		<!-- copy 本工程 类 文件 -->
+		<copy todir="${fbs.path.deploy.classes}" overwrite="true">
+			<fileset dir="${fbs.path.build}">
+			</fileset>
+		</copy>
+		<!-- copy 本工程 web 文件 -->
+		<copy todir="${fbs.path.deploy}" overwrite="true">
+			<fileset dir="${fbs.path.web}">
+			</fileset>
+		</copy>
+		
+		<echo>fbs_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>fbs_war start...</echo>
+		<!--开发环境打包 -->
+		<war destfile="${fbs.file.war}" basedir="${fbs.path.deploy}" >
+		</war>
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>fbs_war end...</echo>
+	</target>
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${fbs.path.deploy}" overwrite="true">
+			<fileset dir="${fbs.path.config.sit}">
+			</fileset>
+		</copy>
+		<war destfile="${fbs.file.war.sit}" basedir="${fbs.path.deploy}" >
+		</war>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${fbs.path.deploy}" overwrite="true">
+			<fileset dir="${fbs.path.config.uat}">
+			</fileset>
+		</copy>
+		<war destfile="${fbs.file.war.uat}" basedir="${fbs.path.deploy}" >
+		</war>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${fbs.path.deploy}" overwrite="true">
+			<fileset dir="${fbs.path.config.prod}">
+			</fileset>
+		</copy>
+		<war destfile="${fbs.file.war.prod}" basedir="${fbs.path.deploy}" >
+		</war>
+	</target>
+</project>

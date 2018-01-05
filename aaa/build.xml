@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<project name="jar" default="jar" basedir=".">
+	<description>全部打包</description>
+	<property location="src" name="path.src"></property>
+	<property location="build" name="path.build"></property>
+	<property location="lib" name="path.lib"></property>
+	<property location="dist" name="path.dist"></property>
+	<property location="${path.dist}/aaa.jar" name="file.jar"></property>
+	
+	<target name="clean">
+		<delete dir="${path.build}" />
+		<delete dir="${path.dist}" />
+		<mkdir dir="${path.build}"/>
+		<mkdir dir="${path.dist}"/>
+	</target>
+	
+	<target name="compile" depends="clean">
+			<echo>start...</echo>
+			<javac srcdir="${path.src}" destdir="${path.build}" debug="true" encoding="UTF-8">
+				<include name="**/*.java"/>
+				<classpath>
+					<path>
+						<fileset dir="${path.lib}">
+						</fileset>
+					</path>
+				</classpath>
+	  		</javac>
+			<echo>end...</echo>
+		</target>
+	
+	<target name="jar" depends="compile">
+		<jar destfile="${file.jar}" basedir="${path.build}"></jar>	
+	</target>
+</project>
+ 

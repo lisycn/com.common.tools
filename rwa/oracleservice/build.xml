@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<project name="oracleservice" default="war" basedir=".">
+	<description>oracleservice打包</description>
+  	<property file="build.properties" />
+  	<property file="../app/build.properties" />
+
+	<target name="clean">
+		<echo>oracleservice_clean start...</echo>
+		<delete dir="${oracleservice.path.dist}" />
+		<echo>oracleservice_clean end...</echo>
+	</target>
+
+	<target name="init" depends="clean">
+		<echo>oracleservice_init start...</echo>
+		<mkdir dir="${oracleservice.path.build}"/>
+		<echo>oracleservice_init end...</echo>
+	</target>
+
+	
+	<target name="compile" depends="init">
+		<echo>oracleservice_compile start...</echo>
+		<javac srcdir="${oracleservice.path.src}" destdir="${oracleservice.path.build}" debug="true" encoding="GBK">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${app.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<fileset dir="${oracleservice.path.lib}">
+					</fileset>
+				</path>
+			</classpath>
+		</javac>
+		<copy todir="${oracleservice.path.build}">
+			<fileset dir="${oracleservice.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>oracleservice_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>oracleservice_deploy start...</echo>
+		<copy todir="${oracleservice.path.deploy}">
+			<fileset dir="${oracleservice.path.web}">
+			</fileset>
+		</copy>
+		<copy todir="${oracleservice.path.deploy.classes}" overwrite="true">
+			<fileset dir="${oracleservice.path.build}">
+			</fileset>
+		</copy>
+		<echo>oracleservice_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>oracleservice_war start...</echo>
+		<antcall target="war.dev" />
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>oracleservice_war end...</echo>
+	</target>
+
+	
+	<!--开发环境打包 -->
+	<target name="war.dev" if="is.war.dev">
+		<war destfile="${oracleservice.file.war}" basedir="${oracleservice.path.deploy}" >
+		</war>
+	</target>
+	
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${oracleservice.path.deploy}" overwrite="true">
+			<fileset dir="${oracleservice.path.config.sit}">
+			</fileset>
+		</copy>
+		<copy todir="${oracleservice.path.deploy.classes}" overwrite="true">
+			<fileset dir="${oracleservice.path.config.sit_src}">
+			</fileset>
+		</copy>
+		<war destfile="${oracleservice.file.war.sit}" basedir="${oracleservice.path.deploy}" >
+		</war>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${oracleservice.path.deploy}" overwrite="true">
+			<fileset dir="${oracleservice.path.config.uat}">
+			</fileset>
+		</copy>
+		<copy todir="${oracleservice.path.deploy.classes}" overwrite="true">
+			<fileset dir="${oracleservice.path.config.uat_src}">
+			</fileset>
+		</copy>
+		<war destfile="${oracleservice.file.war.uat}" basedir="${oracleservice.path.deploy}" >
+		</war>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${oracleservice.path.deploy}" overwrite="true">
+			<fileset dir="${oracleservice.path.config.prod}">
+			</fileset>
+		</copy>
+		<copy todir="${oracleservice.path.deploy.classes}" overwrite="true">
+			<fileset dir="${oracleservice.path.config.prod_src}">
+			</fileset>
+		</copy>
+		<war destfile="${oracleservice.file.war.prod}" basedir="${oracleservice.path.deploy}" >
+		</war>
+	</target>
+	
+</project>

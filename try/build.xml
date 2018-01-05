@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project name="all" default="all" basedir=".">
+	<description>全部打包</description>
+  	<property file="build.properties" />
+  	<property file="tryWeb/build.properties" />
+  	<property file="console/build.properties" />
+  	<property file="batch/build.properties" />
+	
+	<target name="clean">
+		<echo>all_clean start...</echo>		
+		<delete dir="${path.dist}" />
+		<echo>all_clean end...</echo>
+	</target>
+
+	<target name="init" depends="clean">
+		<echo>all_init start...</echo>
+		<mkdir dir="${all.path.dist}"/>		
+		<echo>all_int end...</echo>
+	</target>
+	
+	<target name="all" depends="clean">
+		<echo>all start...</echo>
+		<ant dir="tryWeb" />
+		<ant dir="console" />
+		<ant dir="batch" />
+		
+		<copy todir="${all.path.war}">
+			<fileset dir="${tryWeb.path.war}">
+			</fileset>
+			<fileset dir="${console.path.war}">
+			</fileset>
+			<fileset dir="${batch.path.war}">
+			</fileset>
+		</copy>
+		<echo>all end...</echo>
+	</target>
+</project>

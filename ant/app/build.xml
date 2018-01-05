@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<project name="app" default="tar" basedir=".">
+	<description>app打包</description>
+  	<property file="build.properties" />
+
+	<target name="clean">
+		<echo>app_clean start...</echo>
+		<delete dir="${app.path.dist}" />
+		<echo>app_clean end...</echo>
+	</target>
+
+	<target name="init" depends="clean">
+		<echo>app_init start...</echo>
+		<mkdir dir="${app.path.build}"/>
+		<echo>app_init end...</echo>
+	</target>
+
+	
+	<target name="compile" depends="init">
+		<echo>app_compile start...</echo>
+		<javac srcdir="${app.path.src}" destdir="${app.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${app.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+				</path>
+			</classpath>
+		</javac>
+		<copy todir="${app.path.build}">
+			<fileset dir="${app.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>app_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>app_deploy start...</echo>
+		<copy todir="${app.path.deploy}">
+			<fileset dir="${app.path.web}">
+			    <exclude name="**/*context.xml"/>
+			    <exclude name="**/*.properties"/>
+			    <exclude name="**/*.xml"/>
+			    <exclude name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<echo>app_deploy end...</echo>
+	</target>
+	
+	<target name="tar" depends="deploy">
+		<echo>app_tar start...</echo>
+		<jar destfile="${app.file.jar}">
+			<fileset dir="${app.path.build}">
+			</fileset>
+		</jar>
+		<echo>app_tar end...</echo>
+	</target>
+	
+</project>

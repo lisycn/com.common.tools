@@ -1,0 +1,185 @@
+<?xml version="1.0"?>
+<project name="console" default="war" basedir=".">
+	<description>console打包</description>
+  	<property file="build.properties" />
+  	<property file="../app/build.properties" />
+  	<property file="../web/build.properties" />
+  	<property file="../common/build.properties" />
+  	<property file="../service/build.properties" />
+	
+	<target name="depend.deploy">
+		<echo>console_depend.deploy start...</echo>
+		<ant dir="../app" />
+		<ant dir="../web" />
+		<ant dir="../common" />
+		<ant dir="../service" />
+		<echo>console_depend.deploy end...</echo>
+	</target>
+
+
+	<target name="clean" depends="depend.deploy" unless="is.all">
+		<echo>console_clean start...</echo>
+		<delete dir="${console.path.dist}" />
+		<echo>console_clean end...</echo>
+	</target>
+	<target name="init" depends="clean">
+		<echo>console_init start...</echo>
+		<mkdir dir="${console.path.build}"/>
+		<mkdir dir="${console.path.deploy}"/>
+		
+		<echo>console_init end...</echo>
+	</target>
+	<target name="compile" depends="init">
+		<echo>console_compile start...</echo>
+		<javac srcdir="${console.path.src}" destdir="${console.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${lib.path.lib}">
+					</fileset>
+					<fileset dir="${console.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<fileset dir="${app.path.lib}">
+					</fileset>
+					<pathelement location="${web.file.jar}"/>
+					<pathelement location="${common.file.jar}"/>
+					<pathelement location="${service.file.jar}"/>
+				</path>
+			</classpath>
+  		</javac>
+		<copy todir="${console.path.build}">
+			<fileset dir="${console.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>console_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>console_deploy start...</echo>
+		<!--copy app 中的页面-->
+		<copy todir="${console.path.deploy}">
+			<fileset dir="${app.path.deploy}">
+			    <exclude name="**/*context.xml"/>
+			    <exclude name="**/*.properties"/>
+			    <exclude name="**/*.xml"/>
+			    <exclude name="**/*.jar"/>
+			</fileset>
+		</copy>
+		<!--copy web 中的页面-->
+		<copy todir="${console.path.deploy}">
+			<fileset dir="${web.path.web}">
+			    <exclude name="**/*context.xml"/>
+			    <exclude name="**/*.properties"/>
+			    <exclude name="**/*.xml"/>
+			    <exclude name="**/*.jar"/>
+			    <exclude name="**/*.classes"/>
+			</fileset>
+		</copy>
+		<copy todir="${console.path.deploy}/Req">
+			<fileset dir="${web.path.web}/Req">
+			</fileset>
+		</copy>
+		
+		<!-- copy web工程的jar包到lib -->
+		<copy todir="${console.path.deploy.lib}" file="${web.file.jar}">
+		</copy>		
+		<!-- copy common工程的jar包到lib -->
+		<copy todir="${console.path.deploy.lib}" file="${common.file.jar}">
+		</copy>		
+		<!-- copy service工程的jar包到lib -->
+		<copy todir="${console.path.deploy.lib}" file="${service.file.jar}">
+		</copy>
+
+		<!--copy lib工程 的 lib-->
+		<copy todir="${console.path.deploy.lib}">
+			<fileset dir="${lib.path.lib}">				
+			</fileset>
+		</copy>
+		<!--copy 本工程  lib-->
+		<copy todir="${console.path.deploy.lib}">
+			<fileset dir="${console.path.lib}">				
+			</fileset>
+		</copy>
+		<!-- copy 本工程 类 文件 -->
+		<copy todir="${console.path.deploy.classes}" overwrite="true">
+			<fileset dir="${console.path.build}">
+			</fileset>
+		</copy>
+		<!-- copy app工程 web 文件 -->
+		<copy todir="${console.path.deploy}" overwrite="true">
+			<fileset dir="${app.path.web}">
+			</fileset>
+		</copy>
+		<!-- copy 本工程 web 文件 -->
+		<copy todir="${console.path.deploy}" overwrite="true">
+			<fileset dir="${console.path.web}">
+			</fileset>
+		</copy>
+		
+		<echo>console_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>console_war start...</echo>
+		
+		<antcall target="war.dev" />
+		<antcall target="war.test" />
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>console_war end...</echo>
+	</target>
+	
+	<!--开发环境打包 -->
+	<target name="war.dev" if="is.war.dev">
+		<war destfile="${console.file.war}" basedir="${console.path.deploy}" >
+		</war>
+		<echo>war dist:${console.file.war}</echo>
+	</target>
+	
+	<!--test环境打包 -->
+	<target name="war.test" if="is.war.test">
+		<copy todir="${console.path.deploy}" overwrite="true">
+			<fileset dir="${console.path.config.test}">
+			</fileset>
+		</copy>
+		<war destfile="${console.file.war.test}" basedir="${console.path.deploy}" >
+		</war>
+		<echo>war dist:${console.file.war.test}</echo>
+	</target>
+	
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${console.path.deploy}" overwrite="true">
+			<fileset dir="${console.path.config.sit}">
+			</fileset>
+		</copy>
+		<war destfile="${console.file.war.sit}" basedir="${console.path.deploy}" >
+		</war>
+		<echo>war dist:${console.file.war.sit}</echo>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${console.path.deploy}" overwrite="true">
+			<fileset dir="${console.path.config.uat}">
+			</fileset>
+		</copy>
+		<war destfile="${console.file.war.uat}" basedir="${console.path.deploy}" >
+		</war>
+		<echo>war dist:${console.file.war.uat}</echo>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${console.path.deploy}" overwrite="true">
+			<fileset dir="${console.path.config.prod}">
+			</fileset>
+		</copy>
+		<war destfile="${console.file.war.prod}" basedir="${console.path.deploy}" >
+		</war>
+		<echo>war dist:${console.file.war.prod}</echo>
+	</target>
+</project>

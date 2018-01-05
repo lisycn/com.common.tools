@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table>	
+	<!-- 是否全部生成,默认true -->
+	<all>true</all>
+	<ids>
+		<column name='id'></column>
+	</ids>
+	<columns>
+		<column name='LOCATION_NAME'>
+			<query>like</query>
+		</column>
+	</columns>
+</table> 
+

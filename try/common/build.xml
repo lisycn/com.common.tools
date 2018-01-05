@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<project name="common" default="tar" basedir=".">
+	<description>common打包</description>
+  	<property file="build.properties" />
+	
+	<target name="clean" unless="is.all">
+		<echo>common_clean start...</echo>
+		<delete dir="${common.path.dist}" />
+		<echo>common_clean end...</echo>
+	</target>
+
+	<target name="init" depends="clean">
+		<echo>common_init start...</echo>
+		<mkdir dir="${common.path.build}"/>
+		<echo>common_init end...</echo>
+	</target>
+	
+	<target name="compile" depends="init">
+		<echo>common_compile start...</echo>
+		<javac srcdir="${common.path.src}" destdir="${common.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${lib.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+				</path>
+			</classpath>
+		</javac>
+		<copy todir="${common.path.build}">
+			<fileset dir="${common.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>common_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>common_deploy start...</echo>
+		<copy todir="${common.path.deploy}">
+			<fileset dir="${common.path.build}">
+			</fileset>
+		</copy>
+		<echo>common_deploy end...</echo>
+	</target>
+	
+	<target name="tar" depends="deploy">
+		<echo>common_tar start...</echo>
+		<jar destfile="${common.file.jar}">
+			<fileset dir="${common.path.deploy}">
+			</fileset>
+		</jar>
+		<echo>jar dist:${common.file.jar}</echo>
+		<echo>common_tar end...</echo>
+	</target>
+	
+</project>

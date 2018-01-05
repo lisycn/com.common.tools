@@ -1,0 +1,204 @@
+package ${packageService}.impl;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.common.util.DateUtil;
+import com.common.util.MoneyUtil;
+import com.common.util.StringUtils;
+import com.common.util.UUIDUtils;
+import com.dplatform.framework.security.model.ISecurityUser;
+import com.dplatform.privilege.hibernate.dao.UserDAO;
+import ${packageDao}.IBaseDao;
+import ${packageBase}.exception.BusinessException;
+import ${packagePojo}.Dict;
+import ${packageDao}.${tableVo.pojoName}Dao;
+import ${packagePojo}.${tableVo.pojoName};
+import ${packageService}.${tableVo.pojoName}Service;
+import com.fbs.fundtrade.vo.Page;
+import com.fmp.message.entity.FmpResponse;
+
+@Service("${tableVo.pojoNameVar}Service")
+public class ${tableVo.pojoName}ServiceImpl extends BaseServiceImpl implements ${tableVo.pojoName}Service{
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger(${tableVo.pojoName}ServiceImpl.class);
+	
+	@Autowired
+	private ${tableVo.pojoName}Dao ${tableVo.pojoNameVar}Dao;
+	@Autowired
+	private UserDAO userDao;	
+	@Autowired
+	private ApiService apiService;
+	
+    @Override
+	public List<${tableVo.pojoName}>  query${tableVo.pojoName}List(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby, int offset, int pageSize){
+		logger.debug("杩涘叆鏂规硶:query${tableVo.pojoName}List,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby + ",offset:" + offset + ",pageSize:" + pageSize);
+		List<${tableVo.pojoName}> list = ${tableVo.pojoNameVar}Dao.query${tableVo.pojoName}List(${tableVo.pojoNameVar},orderby,offset,pageSize);
+				
+		logger.debug("缁撴潫鏂规硶:query${tableVo.pojoName}List,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby + ",offset:" + offset + ",pageSize:" + pageSize);
+		return list;
+	}	
+	
+    @Override
+	public Page<${tableVo.pojoName}>  query${tableVo.pojoName}Page(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby, int offset, int pageSize,ISecurityUser user){
+		logger.debug("杩涘叆鏂规硶:query${tableVo.pojoName}Page,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby + ",offset:" + offset + ",pageSize:" + pageSize);
+		
+		Map<String, Object>  response = apiService.query${tableVo.pojoName}Page(${tableVo.pojoNameVar},offset,pageSize,user);
+		
+		List<Map<String, Object>> data = (response == null ? null : (List<Map<String,Object>>)response.get(FmpResponse.NODE_NAME_RESULT));
+		if (data == null || data.size() == 0) {
+			return null;
+		}
+		
+		List<${tableVo.pojoName}> list = new ArrayList<${tableVo.pojoName}>();
+		for(Map<String,Object> map:data){
+			${tableVo.pojoName} item = ${tableVo.pojoName}.fromMap(map);
+			list.add(item);
+		}
+		response.put("data", list);
+		Page<${tableVo.pojoName}> page = getPage(response);
+				
+		logger.debug("缁撴潫鏂规硶:query${tableVo.pojoName}Page,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby + ",offset:" + offset + ",pageSize:" + pageSize);
+		return page;
+	}
+	
+	@Override
+	public int query${tableVo.pojoName}ListCount(${tableVo.pojoName} ${tableVo.pojoNameVar}){
+		logger.debug("杩涘叆鏂规硶:query${tableVo.pojoName}ListCount,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		logger.debug("缁撴潫鏂规硶:query${tableVo.pojoName}ListCount,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		return ${tableVo.pojoNameVar}Dao.query${tableVo.pojoName}ListCount(${tableVo.pojoNameVar});
+	}
+	
+	/**
+	 * 娣诲姞涓�鏉¤褰�
+	 * @param ${tableVo.pojoNameVar}
+	 * @throws BusinessException 
+	 */
+	@Override
+	public void save${tableVo.pojoName}(${tableVo.pojoName} ${tableVo.pojoNameVar},String userId) throws BusinessException{
+		logger.debug("杩涘叆鏂规硶:save${tableVo.pojoName},鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",userId:" + userId);
+		if (${tableVo.pojoNameVar} == null) {
+			throw new RuntimeException("璁板綍涓虹┖");
+		}
+
+		${tableVo.pojoNameVar}.setId(UUIDUtils.getUUID());
+		
+		${tableVo.pojoNameVar}.setCreateDate(DateUtil.getYyyyMMdd());
+		${tableVo.pojoNameVar}.setCreateTime(DateUtil.getHHmmss());
+		${tableVo.pojoNameVar}.setCreateUser(userId);
+		${tableVo.pojoNameVar}.setStatus(Dict.VALUE_HS_STATUS_INIT);
+		
+		formateDate(${tableVo.pojoNameVar});
+		check${tableVo.pojoName}(${tableVo.pojoNameVar});
+		${tableVo.pojoNameVar}Dao.save(${tableVo.pojoNameVar});
+		
+		logger.debug("缁撴潫鏂规硶:save${tableVo.pojoName},鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",userId:" + userId);
+	}
+	
+	/**
+	 * 鏃ユ湡鏍煎紡杞崲锛屾暟鎹簱涓簓yyyMMdd HHmmss
+	 * @param ${tableVo.pojoNameVar}
+	 */
+	private void formateDate(${tableVo.pojoName} ${tableVo.pojoNameVar}) {
+		logger.debug("杩涘叆鏂规硶:formateDate,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		if (${tableVo.pojoNameVar} == null) {
+			return;
+		}
+		<%for(col in tableVo.cols){
+			if(!col.date){
+				continue;
+			}%>
+		${tableVo.pojoNameVar}.${col.setFuntionName}(DateUtil.toYyyyMMdd(${tableVo.pojoNameVar}.${col.getFuntionName}()));			
+		<%}%>
+		logger.debug("缁撴潫鏂规硶:formateDate,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+	}
+	
+	/**
+	 * 鏃ユ湡鏍煎紡杞崲锛屾樉绀烘牸寮忎负yyyy-MM-dd HH:mm:ss
+	 * @param ${tableVo.pojoNameVar}
+	 */
+	private void formateDateForEdit(${tableVo.pojoName} ${tableVo.pojoNameVar}) {
+		logger.debug("杩涘叆鏂规硶:formateDateForEdit,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		if (${tableVo.pojoNameVar} == null) {
+			logger.debug("缁撴潫鏂规硶:formateDateForEdit,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+			return;
+		}
+		<%for(col in tableVo.cols){
+			if(!col.date){
+				continue;
+			}%>
+		${tableVo.pojoNameVar}.${col.setFuntionName}(DateUtil.yyyyMMddToYyyy_MM_dd(${tableVo.pojoNameVar}.${col.getFuntionName}()));			
+		<%}%>
+		logger.debug("缁撴潫鏂规硶:formateDateForEdit,鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+	}
+
+	private void check${tableVo.pojoName}(${tableVo.pojoName} ${tableVo.pojoNameVar}){
+		logger.debug("杩涘叆鏂规硶:check${tableVo.pojoName},鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		if (${tableVo.pojoNameVar} == null) {
+			throw new BusinessException("鏁版嵁涓虹┖!");
+		}
+		<%for(col in tableVo.cols){%>
+			<%if(col.checkEmpty){%>
+		if (StringUtils.isEmpty(${tableVo.pojoNameVar}.${col.getFuntionName}()) ) {
+			throw new BusinessException("${col.comment}涓嶈兘涓虹┖!");
+		}	
+			<%}%>
+			
+			<%if(col.checkRegexJava){%>
+		StringUtils.checkPattern(${tableVo.pojoNameVar}.${col.getFuntionName}(), "${col.comment}", "${col.regexJava}");
+			<%}%>
+		<%}%>
+		logger.debug("缁撴潫鏂规硶:check${tableVo.pojoName},鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+	}
+
+	@Override
+	public void update${tableVo.pojoName}(${tableVo.pojoName} ${tableVo.pojoNameVar}, ISecurityUser user) {
+		logger.debug("杩涘叆鏂规硶:update${tableVo.pojoName},鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",user:" + user);
+		if (${tableVo.pojoNameVar} == null) {
+			throw new BusinessException("璁板綍涓虹┖");
+		}
+
+		${tableVo.pojoName} old = get${tableVo.pojoName}ById(${tableVo.pojoNameVar}.getId());
+		if (old == null) {
+			throw new BusinessException("鏈壘鍒拌淇敼鐨勮褰�,id:" + ${tableVo.pojoNameVar}.getId());
+		}
+		
+		<%for(col in tableVo.cols){%>
+			<%if(col.modify && !col.inids){%>
+		old.${col.setFuntionName}(${tableVo.pojoNameVar}.${col.getFuntionName}());	
+			<%}%>
+		<%}%>
+
+		formateDate(old);
+		check${tableVo.pojoName}(old);
+		${tableVo.pojoNameVar}Dao.save(old);
+		logger.debug("缁撴潫鏂规硶:update${tableVo.pojoName},鍙傛暟,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",user:" + user);
+	}
+
+	@Override
+	public ${tableVo.pojoName} get${tableVo.pojoName}ById(String id) {
+		logger.debug("杩涘叆鏂规硶:get${tableVo.pojoName}ById,鍙傛暟,id:" + id);
+		logger.debug("缁撴潫鏂规硶:get${tableVo.pojoName}ById,鍙傛暟,id:" + id);
+		return ${tableVo.pojoNameVar}Dao.get${tableVo.pojoName}ById(id);
+	}
+
+	@Override
+	public ${tableVo.pojoName} get${tableVo.pojoName}ForEidtById(String id) {
+		logger.debug("杩涘叆鏂规硶:get${tableVo.pojoName}ForEidtById,鍙傛暟,id:" + id);
+		${tableVo.pojoName} d = get${tableVo.pojoName}ById(id);
+		formateDateForEdit(d);
+		
+		logger.debug("缁撴潫鏂规硶:get${tableVo.pojoName}ForEidtById,鍙傛暟,id:" + id);
+		return d;
+	}
+	@Override
+	public void delete(String id) {
+		logger.debug("杩涘叆鏂规硶:delete,鍙傛暟,id:" + id);
+		logger.debug("缁撴潫鏂规硶:delete,鍙傛暟,id:" + id);
+		${tableVo.pojoNameVar}Dao.delete(id);
+	}
+}

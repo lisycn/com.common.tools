@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project name="all" default="all" basedir=".">
+	<description>全部打包</description>
+  	<property file="build.properties" />
+  	<property file="fbs/build.properties" />
+  	<property file="control/build.properties" />
+  	<property file="service/build.properties" />
+  	<property file="accountant/build.properties" />
+	
+	<target name="clean">
+		<echo>all_clean start...</echo>
+		<delete dir="${all.path.dist}" />
+		<echo>all_clean end...</echo>
+	</target>
+
+	<target name="init" depends="clean">
+		<echo>all_init start...</echo>
+		<mkdir dir="${all.path.dist}"/>
+		<echo>all_int end...</echo>
+	</target>
+	
+	<target name="all" depends="clean">
+		<echo>all start...</echo>
+		<ant dir="fbs" />
+		<ant dir="control" />
+		<ant dir="service" />
+		<ant dir="accountant" />
+		
+		<copy todir="${all.path.war}">
+			<fileset dir="${fbs.path.war}">
+			</fileset>
+			<fileset dir="${control.path.war}">
+			</fileset>
+			<fileset dir="${service.path.war}">
+			</fileset>
+			<fileset dir="${accountant.path.war}">
+			</fileset>
+		</copy>
+		<echo>all end...</echo>
+	</target>
+</project>

@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<project name="web" default="tar" basedir=".">
+	<description>web打包</description>
+  	<property file="build.properties" />
+  	<property file="../app/build.properties" />
+
+	
+	<target name="depend.deploy">
+		<echo>web_depend.deploy start...</echo>
+		<ant dir="../app" />
+		<echo>web_depend.deploy end...</echo>
+	</target>
+	
+	<target name="clean" depends="depend.deploy">
+		<echo>web_clean start...</echo>
+		<delete dir="${web.path.dist}" />
+		<echo>web_clean end...</echo>
+	</target>
+
+	<target name="init" depends="clean">
+		<echo>web_init start...</echo>
+		<mkdir dir="${web.path.build}"/>
+		<echo>web_init end...</echo>
+	</target>
+	
+	<target name="compile" depends="init">
+		<echo>web_compile start...</echo>
+		<javac srcdir="${web.path.src}" destdir="${web.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${app.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<pathelement location="${app.file.jar}"/>
+				</path>
+			</classpath>
+		</javac>
+		<copy todir="${web.path.build}">
+			<fileset dir="${web.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>web_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>web_deploy start...</echo>
+		<copy todir="${web.path.deploy}">
+			<fileset dir="${web.path.build}">
+			</fileset>
+		</copy>
+		<echo>web_deploy end...</echo>
+	</target>
+	
+	<target name="tar" depends="deploy">
+		<echo>web_tar start...</echo>
+		<jar destfile="${web.file.jar}">
+			<fileset dir="${web.path.deploy}">
+			</fileset>
+		</jar>
+		<echo>web_tar end...</echo>
+	</target>
+	
+</project>

@@ -1,0 +1,16 @@
+eclipse.preferences.version=1
+encoding//ant/accountant/build.properties=UTF-8
+encoding//ant/app/build.properties=UTF-8
+encoding//ant/build.properties=UTF-8
+encoding//ant/common/build.properties=UTF-8
+encoding//ant/control/build.properties=UTF-8
+encoding//ant/fbs/build.properties=UTF-8
+encoding//ant/service/build.properties=UTF-8
+encoding//ant/web/build.properties=UTF-8
+encoding//rwa/app/build.properties=UTF-8
+encoding//rwa/build.properties=UTF-8
+encoding//rwa/indicator/build.properties=UTF-8
+encoding//rwa/oracleservice/build.properties=UTF-8
+encoding//rwa/web/build.properties=UTF-8
+encoding/<project>=UTF-8
+encoding/src=UTF-8

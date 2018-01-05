@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<project name="batch" default="war" basedir=".">
+	<description>batch打包</description>
+  	<property file="build.properties" />
+  	<property file="../common/build.properties" />
+  	<property file="../service/build.properties" />
+	
+	<target name="depend.deploy">
+		<echo>batch_depend.deploy start...</echo>
+		<ant dir="../common" />
+		<ant dir="../service" />
+		<echo>batch_depend.deploy end...</echo>
+	</target>
+
+
+	<target name="clean" depends="depend.deploy" unless="is.all">
+		<echo>batch_clean start...</echo>
+		<delete dir="${batch.path.dist}" />
+		<echo>batch_clean end...</echo>
+	</target>
+	
+	<target name="init" depends="clean">
+		<echo>batch_init start...</echo>
+		<mkdir dir="${batch.path.build}"/>
+		<mkdir dir="${batch.path.deploy}"/>
+		
+		<echo>batch_init end...</echo>
+	</target>
+		
+	<target name="compile" depends="init">
+		<echo>batch_compile start...</echo>
+		<javac srcdir="${batch.path.src}" destdir="${batch.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${lib.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<pathelement location="${common.file.jar}"/>
+					<pathelement location="${service.file.jar}"/>
+				</path>
+			</classpath>
+  		</javac>
+		<copy todir="${batch.path.build}">
+			<fileset dir="${batch.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>batch_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>batch_deploy start...</echo>
+		
+		<!-- copy common工程的jar包到lib -->
+		<copy todir="${batch.path.deploy.lib}" file="${common.file.jar}">
+		</copy>		
+		<!-- copy service工程的jar包到lib -->
+		<copy todir="${batch.path.deploy.lib}" file="${service.file.jar}">
+		</copy>
+		
+		<!--copy lib工程 的 lib-->
+		<copy todir="${batch.path.deploy.lib}">
+			<fileset dir="${lib.path.lib}">				
+			</fileset>
+		</copy>
+		<!-- copy 本工程 类 文件 -->
+		<copy todir="${batch.path.deploy.classes}" overwrite="true">
+			<fileset dir="${batch.path.build}">
+			</fileset>
+		</copy>
+		<!-- copy 本工程 web 文件 -->
+		<copy todir="${batch.path.deploy}" overwrite="true">
+			<fileset dir="${batch.path.web}">
+			</fileset>
+		</copy>
+		
+		<echo>batch_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>batch_war start...</echo>
+		
+		<antcall target="war.dev" />
+		<antcall target="war.test" />
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>batch_war end...</echo>
+	</target>
+	
+	<!--开发环境打包 -->
+	<target name="war.dev" if="is.war.dev">
+		<war destfile="${batch.file.war}" basedir="${batch.path.deploy}" >
+		</war>
+		<echo>war dist:${batch.file.war}</echo>
+	</target>
+	
+	<!--test环境打包 -->
+	<target name="war.test" if="is.war.test">
+		<copy todir="${batch.path.deploy}" overwrite="true">
+			<fileset dir="${batch.path.config.test}">
+			</fileset>
+		</copy>
+		<war destfile="${batch.file.war.test}" basedir="${batch.path.deploy}" >
+		</war>
+		<echo>war dist:${batch.file.war.test}</echo>
+	</target>
+	
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${batch.path.deploy}" overwrite="true">
+			<fileset dir="${batch.path.config.sit}">
+			</fileset>
+		</copy>
+		<war destfile="${batch.file.war.sit}" basedir="${batch.path.deploy}" >
+		</war>
+		<echo>war dist:${batch.file.war.sit}</echo>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${batch.path.deploy}" overwrite="true">
+			<fileset dir="${batch.path.config.uat}">
+			</fileset>
+		</copy>
+		<war destfile="${batch.file.war.uat}" basedir="${batch.path.deploy}" >
+		</war>
+		<echo>war dist:${batch.file.war.uat}</echo>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${batch.path.deploy}" overwrite="true">
+			<fileset dir="${batch.path.config.prod}">
+			</fileset>
+		</copy>
+		<war destfile="${batch.file.war.prod}" basedir="${batch.path.deploy}" >
+		</war>
+		<echo>war dist:${batch.file.war.prod}</echo>
+	</target>
+</project>

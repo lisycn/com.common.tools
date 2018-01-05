@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<project name="accountant" default="war" basedir=".">
+	<description>accountant打包</description>
+  	<property file="build.properties" />
+  	<property file="../common/build.properties" />
+	
+	<target name="depend.deploy">
+		<echo>accountant_depend.deploy start...</echo>
+		<ant dir="../common" />
+		<echo>accountant_depend.deploy end...</echo>
+	</target>
+
+
+	<target name="clean" depends="depend.deploy">
+		<echo>accountant_clean start...</echo>
+		<delete dir="${accountant.path.dist}" />
+		<echo>accountant_clean end...</echo>
+	</target>
+	<target name="init" depends="clean">
+		<echo>accountant_init start...</echo>
+		<mkdir dir="${accountant.path.build}"/>
+		<echo>accountant_init end...</echo>
+	</target>
+	<target name="compile" depends="init">
+		<echo>accountant_compile start...</echo>
+		<javac srcdir="${accountant.path.src}" destdir="${accountant.path.build}" debug="true" encoding="UTF-8">
+			<include name="**/*.java"/>
+			<classpath>
+				<path>
+					<fileset dir="${accountant.path.lib}">
+					</fileset>
+					<fileset dir="${path.tomcat.lib}">
+					</fileset>
+					<pathelement location="${common.file.jar}"/>
+				</path>
+				<pathelement location="${common.path.lib}/junit-4.11.jar"/>
+			</classpath>
+  		</javac>
+		<copy todir="${accountant.path.build}">
+			<fileset dir="${accountant.path.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+		<echo>accountant_compile end...</echo>
+	</target>
+	
+	<target name="deploy" depends="compile">
+		<echo>accountant_deploy start...</echo>
+		<!-- copy common工程的jar包到lib -->
+		<copy todir="${accountant.path.deploy.lib}" file="${common.file.jar}">
+		</copy>
+		<!-- copy 本工程 类 文件 -->
+		<copy todir="${accountant.path.deploy.classes}" overwrite="true">
+			<fileset dir="${accountant.path.build}">
+			</fileset>
+		</copy>
+		<!-- copy 本工程 web 文件 -->
+		<copy todir="${accountant.path.deploy}" overwrite="true">
+			<fileset dir="${accountant.path.web}">
+			</fileset>
+		</copy>
+		
+		<echo>accountant_deploy end...</echo>
+	</target>
+	
+	<target name="war" depends="deploy">
+		<echo>accountant_war start...</echo>
+		<!--开发环境打包 -->
+		<war destfile="${accountant.file.war}" basedir="${accountant.path.deploy}" >
+		</war>
+		<antcall target="war.sit" />
+		<antcall target="war.uat" />
+		<antcall target="war.prod" />
+		<echo>accountant_war end...</echo>
+	</target>
+	<!--sit环境打包 -->
+	<target name="war.sit" if="is.war.sit">
+		<copy todir="${accountant.path.deploy}" overwrite="true">
+			<fileset dir="${accountant.path.config.sit}">
+			</fileset>
+		</copy>
+		<war destfile="${accountant.file.war.sit}" basedir="${accountant.path.deploy}" >
+		</war>
+	</target>
+	<!--uat环境打包 -->
+	<target name="war.uat" if="is.war.uat">
+		<copy todir="${accountant.path.deploy}" overwrite="true">
+			<fileset dir="${accountant.path.config.uat}">
+			</fileset>
+		</copy>
+		<war destfile="${accountant.file.war.uat}" basedir="${accountant.path.deploy}" >
+		</war>
+	</target>
+
+	<!--生产环境打包 -->
+	<target name="war.prod" if="is.war.prod">
+		<copy todir="${accountant.path.deploy}" overwrite="true">
+			<fileset dir="${accountant.path.config.prod}">
+			</fileset>
+		</copy>
+		<war destfile="${accountant.file.war.prod}" basedir="${accountant.path.deploy}" >
+		</war>
+	</target>
+</project>

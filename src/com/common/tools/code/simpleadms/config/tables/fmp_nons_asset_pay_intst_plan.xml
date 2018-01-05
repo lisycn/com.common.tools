@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table>	
+	<!-- 是否全部生成,默认true -->
+	<all>true</all>
+	<ids>
+		<column name='id'></column>
+	</ids>
+	<columns>
+		<column name='rate'>
+			<modify>false</modify>
+		</column>
+		<column name='pay_date'>
+			<!-- 是否检查非空，默认false -->
+			<checkEmpty>true</checkEmpty>
+			<date>true</date>
+		</column>
+		<column name='interest_begin'>
+			<!-- 是否检查非空，默认false -->
+			<checkEmpty>true</checkEmpty>
+			<regexJs>^\\d{4}-\\d{2}-\\d{2}$</regexJs>
+			<regexJava>\\d{8}</regexJava>
+			<date>true</date>
+			<query>before</query>
+		</column>
+		<column name='interest_end'>
+			<!-- 是否检查非空，默认false -->
+			<checkEmpty>true</checkEmpty>
+			<date>true</date>
+			<query>after</query>
+		</column>
+		<column name='interest_status'>
+			<!-- 是否检查非空，默认false -->
+			<checkEmpty>true</checkEmpty>
+			<query>equals</query>
+		</column>
+	</columns>
+</table> 
+
