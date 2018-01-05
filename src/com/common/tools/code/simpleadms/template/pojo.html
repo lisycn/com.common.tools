@@ -20,7 +20,7 @@ import ${type};
 public class ${tableVo.pojoName} implements java.io.Serializable {	
 <%for(col in tableVo.cols){%>	
 	private ${col.fieldType} ${col.fieldName};//${col.comment}
-	<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.RANGE == col.query){%>
+	<%if(@com.common.tools.code.simpleadms.constants.QueryEnum.RANGE == col.query){%>
 	private ${col.fieldType} ${col.fieldName}Begin;
 	private ${col.fieldType} ${col.fieldName}End;
 	<%}%>
@@ -49,7 +49,7 @@ public class ${tableVo.pojoName} implements java.io.Serializable {
 	public void ${col.setFuntionName}(${col.fieldType} ${col.fieldName}) {
 		this.${col.fieldName} = ${col.fieldName};
 	}
-	<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.RANGE == col.query){%>
+	<%if(@com.common.tools.code.simpleadms.constants.QueryEnum.RANGE == col.query){%>
 	@Transient
 	public ${col.fieldType} ${col.getFuntionName}Begin() {
 		return this.${col.fieldName}Begin;

@@ -54,9 +54,9 @@ public abstract class SimpleADMS {
 	private static Logger logger = Logger.getLogger(SimpleADMS.class);
 	
 	/**配置文件,从classpath开始*/
-	public static final String CONFIG_FILE = "com/fbs/pt/tools/code/simpleadms/config/adms.properties";
+	public static final String CONFIG_FILE = "com/common/tools/code/simpleadms/config/adms.properties";
 	/**表配置文件目录,从classpath开始*/
-	public static final String TABLE_CONFIG_FILE_DIR = "com/fbs/pt/tools/code/simpleadms/config/tables";
+	public static final String TABLE_CONFIG_FILE_DIR = "com/common/tools/code/simpleadms/config/tables";
 	
 	/**  要生成的表配置来源： table.xml */
 	public static final String DATA_TYPE_XML = "xml";
