@@ -1,0 +1,14 @@
+package ${packageDao};
+
+import java.util.List;
+import ${packagePojo}.${tableVo.pojoName};
+public interface ${tableVo.pojoName}Dao extends IBaseDao{
+	
+	public List<${tableVo.pojoName}> query${tableVo.pojoName}List(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby,int offset,int pageSize);
+
+	public int query${tableVo.pojoName}ListCount(${tableVo.pojoName} ${tableVo.pojoNameVar}) ;
+	
+	public ${tableVo.pojoName} get${tableVo.pojoName}ById(String id);
+	
+	void delete(String id);
+}

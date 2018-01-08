@@ -1,0 +1,141 @@
+package ${packageDao}.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+import com.dplatform.framework.security.model.ISecurityUser;
+import com.investfinancing.common.utils.StringUtils;
+import com.investfinancing.common.vo.Page;
+import com.investfinancing.common.vo.SqlVo;
+import ${packageDao}.${tableVo.pojoName}Dao;
+import ${packagePojo}.${tableVo.pojoName};
+
+@Component("${tableVo.pojoNameVar}Dao")
+public class ${tableVo.pojoName}DaoImpl<T>  extends BaseDaoImpl<T> implements ${tableVo.pojoName}Dao{
+	private Logger logger = Logger.getLogger(${tableVo.pojoName}DaoImpl.class);
+	
+	public List<${tableVo.pojoName}> query${tableVo.pojoName}List(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby,int offset,int pageSize){
+		logger.debug("进入方法:query${tableVo.pojoName}List,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby + ",offset:" + offset + ",pageSize:" + pageSize);
+		SqlVo vo = getSqlVoOfquery${tableVo.pojoName}List(${tableVo.pojoNameVar},orderby);
+		List<${tableVo.pojoName}> list = findHQLObjectPage(vo.getSql(), offset, pageSize,vo.getPrmtrs());
+
+		logger.debug("结束方法:query${tableVo.pojoName}List,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby + ",offset:" + offset + ",pageSize:" + pageSize);
+		return list;
+	}
+
+	public int query${tableVo.pojoName}ListCount(${tableVo.pojoName} ${tableVo.pojoNameVar}) {
+		logger.debug("进入方法:query${tableVo.pojoName}ListCount,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		SqlVo vo = getSqlVoOfquery${tableVo.pojoName}List(${tableVo.pojoNameVar},null);
+		String hql = "select count(t.id) "  + vo.getSql();
+		List<Object> list = findHQLObject(hql,vo.getPrmtrs());
+		if (list == null || list.get(0) == null) {
+			logger.debug("结束方法:query${tableVo.pojoName}ListCount,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+			return 0;
+		}
+		logger.debug("结束方法:query${tableVo.pojoName}ListCount,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar});
+		return Integer.parseInt(list.get(0).toString());
+	}
+	
+	private SqlVo getSqlVoOfquery${tableVo.pojoName}List(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby){
+		logger.debug("进入方法:getSqlVoOfquery${tableVo.pojoName}List,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby);
+		StringBuffer sb = new StringBuffer();
+		sb.append("from ${tableVo.pojoName} t where 1 = 1");
+		
+		StringBuffer orderSb = new StringBuffer();
+		orderSb.append(" order by ");
+		if (!StringUtils.isEmpty(orderby)) {
+			orderSb.append(orderby + ",");
+		}
+		orderSb.append(" t.id");
+		if (${tableVo.pojoNameVar} == null) {
+			sb.append(orderSb.toString());
+			logger.debug("结束方法:getSqlVoOfquery${tableVo.pojoName}List,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby);
+			return new SqlVo(sb.toString(),null);
+		}
+		
+		List<Object> prmtrList = new ArrayList<>();
+		
+		<%for(col in tableVo.cols){%>
+			<%if(!col.queryCol){continue;}%>
+			<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.EQUALS == col.query){%>
+		String ${col.fieldName} = ${tableVo.pojoNameVar}.${col.getFuntionName}();
+		if (!StringUtils.isEmpty(${col.fieldName})) {
+			sb.append(" and t.${col.fieldName} = ?");
+			prmtrList.add(${col.fieldName});
+		}
+			<%}%>
+			<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.LIKE == col.query){%>
+		String ${col.fieldName} = ${tableVo.pojoNameVar}.${col.getFuntionName}();
+		if (!StringUtils.isEmpty(${col.fieldName})) {
+			sb.append(" and t.${col.fieldName} like ?");
+			prmtrList.add("%" + ${col.fieldName} + "%");
+		}
+			<%}%>
+			<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.BEFORE == col.query){%>
+		String ${col.fieldName} = ${tableVo.pojoNameVar}.${col.getFuntionName}();
+		if (!StringUtils.isEmpty(${col.fieldName})) {
+			${col.fieldName} = DateUtil.toYyyyMMdd(${col.fieldName});
+			sb.append(" and t.${col.fieldName} <= ?");
+			prmtrList.add(${col.fieldName});
+		}
+			<%}%>
+			<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.AFTER == col.query){%>
+		String ${col.fieldName} = ${tableVo.pojoNameVar}.${col.getFuntionName}();
+		if (!StringUtils.isEmpty(${col.fieldName})) {
+			${col.fieldName} = DateUtil.toYyyyMMdd(${col.fieldName});
+			sb.append(" and t.${col.fieldName} >= ?");
+			prmtrList.add(${col.fieldName});
+		}
+			<%}%>
+			<%if(@com.fbs.pt.tools.code.simpleadms.constants.QueryEnum.RANGE == col.query){%>
+		String ${col.fieldName}Begin = ${tableVo.pojoNameVar}.${col.getFuntionName}Begin();
+		if (!StringUtils.isEmpty(${col.fieldName}Begin)) {
+			${col.fieldName}Begin = DateUtil.toYyyyMMdd(${col.fieldName}Begin);
+			sb.append(" and t.${col.fieldName} >= ?");
+			prmtrList.add(${col.fieldName}Begin);
+		}
+		String ${col.fieldName}End = ${tableVo.pojoNameVar}.${col.getFuntionName}End();
+		if (!StringUtils.isEmpty(${col.fieldName}End)) {
+			${col.fieldName}End = DateUtil.toYyyyMMdd(${col.fieldName}End);
+			sb.append(" and t.${col.fieldName} <= ?");
+			prmtrList.add(${col.fieldName}End);
+		}
+			<%}%>
+		<%}%>
+		sb.append(orderSb.toString());
+		
+		logger.debug("结束方法:getSqlVoOfquery${tableVo.pojoName}List,参数,${tableVo.pojoNameVar}:" + ${tableVo.pojoNameVar} + ",orderby:" + orderby);
+		return new SqlVo(sb.toString(),prmtrList.toArray());
+	}
+
+	@Override
+	public ${tableVo.pojoName} get${tableVo.pojoName}ById(String id) {
+		logger.debug("进入方法:get${tableVo.pojoName}ById,参数,id:" + id);
+		String hql = "from ${tableVo.pojoName} t where t.id = ?";
+		List<${tableVo.pojoName}> list = findHQLObject(hql, new Object[]{id});
+		if (list == null || list.size() == 0) {
+			logger.debug("结束方法:get${tableVo.pojoName}ById,参数,id:" + id);
+			return null;
+		}
+		
+		logger.debug("结束方法:get${tableVo.pojoName}ById,参数,id:" + id);
+		return list.get(0);
+	}
+	
+	@Override
+	public void delete(String id) {
+		logger.debug("进入方法:delete,参数,id:" + id);
+		deleteById(${tableVo.pojoName}.class, id);
+		logger.debug("结束方法:delete,参数,id:" + id);
+	}
+	
+	@Override
+	public Page<${tableVo.pojoName}> query${tableVo.pojoName}Page(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby, int offset, int pageSize, ISecurityUser user) {
+		SqlVo vo = getSqlVoOfquery${tableVo.pojoName}List(${tableVo.pojoNameVar},orderby);
+		return queryHqlPage(vo.getSql(), vo.getPrmtrs(), offset, pageSize);
+	}
+	
+}
