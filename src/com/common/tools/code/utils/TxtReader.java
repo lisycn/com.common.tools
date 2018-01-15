@@ -13,7 +13,7 @@ public class TxtReader {
 	
 	public static void main(String[] args) throws Exception {
 		
-		int pageIndex = 38;
+		int pageIndex = 100;
 		printLine("E:/tools/b/aaa.txt", pageIndex * 2000, 2000);
 //		printLine("D:/temp.txt", pageIndex * 2000, 2000);
 	}
