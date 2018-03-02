@@ -1,18 +1,6 @@
 package ${packageDao};
 
-import java.util.List;
-import com.dplatform.framework.security.model.ISecurityUser;
-import com.investfinancing.common.vo.Page;
 import ${packagePojo}.${tableVo.pojoName};
-public interface ${tableVo.pojoName}Dao extends BaseDao{
+public interface ${tableVo.pojoName}Dao extends BaseDao<${tableVo.pojoName},String>{
 	
-	public List<${tableVo.pojoName}> query${tableVo.pojoName}List(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby,int offset,int pageSize);
-
-	public int query${tableVo.pojoName}ListCount(${tableVo.pojoName} ${tableVo.pojoNameVar}) ;
-	
-	public ${tableVo.pojoName} get${tableVo.pojoName}ById(String id);
-	
-	void delete(String id);
-	
-	public Page<${tableVo.pojoName}> query${tableVo.pojoName}Page(${tableVo.pojoName} ${tableVo.pojoNameVar},String orderby, int offset, int pageSize, ISecurityUser user);
 }

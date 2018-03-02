@@ -1,4 +1,15 @@
-
-
-
-
+<?xml version="1.0" encoding="UTF-8"?>
+<Document>
+	<header>
+		<channelCode>NAP001</channelCode>
+		<channelFlow>NAP00120180222001gxzjxa80vxv</channelFlow>
+		<channelDate>20171214</channelDate>
+		<channelTime>164011</channelTime>
+		<encryptData></encryptData>
+	</header>
+	<body>
+		<TRANSCODE>OGW00294</TRANSCODE>
+		<XMLPARA>cRcYlVeFhOczsQL3BTwkuePTWTBX9koHz35b/9Kc8E07XHkZhUsrgp65FUwu+sZ8OJYqJdu/h6xBQdRgVi/4Fl9UjffDH5IP5rab0Rp9kLD2ks3gkaNDEw==
+		</XMLPARA>
+	</body>
+</Document>
