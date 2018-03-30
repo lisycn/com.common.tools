@@ -1,56 +1,52 @@
-\<%@ page contentType="text/html;charset=utf-8" pageEncoding="utf-8"%>
 <!DOCTYPE html>
-<html lang="zh-cn">
+<html>
 <head>
-\<%@ include file="/header/header.jsp"%>
-\<%@ include file="${jspFold}/include.jsp"%>
-<link href="\<%=request.getContextPath()%>/css/edit.css" type="text/css" rel="stylesheet">
-<link href="\<%=request.getContextPath()%>/css/progressbar.css" type="text/css" rel="stylesheet">
-<script type="text/javascript" src="\<%=request.getContextPath()%>/js/plugin/jquery.form.js"></script>
-<script type="text/javascript" src="\<%=request.getContextPath()%>/js/plugin/My97DatePicker/WdatePicker.js"></script>
-<script type="text/javascript" src="\<%=request.getContextPath()%>${jsFold}/${tableVo.pojoNameVar}/${tableVo.pojoNameVar}Edit.js"></script>
-<script type="text/javascript">
-var op = '\${op}';
-var returnType = '\${returnType}';
-</script>
+<meta charset="UTF-8">
+<title>send</title>
+\<%layout("/include.html"){}%>
+<script type="text/javascript" src="\${cxt}/static/js/hxApi/${tableVo.pojoNameVar}.js"></script>
+<style type="text/css">
+</style>
 </head>
 <body>
-	<div class="panel panel-default no-border">
-		<div class="panel-heading floating-top">
-			<!-- 头部步骤说明-->
-			<div class="flow_container">
-			<!---头部 start-->
-			 <div class="theme_title">\${title}</div>
-			 <%
-			 /**
-             <div class="content_theme">
-               <ul class="theme_step">
-                 <li class="stepfocus"><span title="第一步 录入\${name}">第1步 录入\${name}</span></li>
-                 <li><span title="第2步 付息计划调整">第2步 付息计划调整</span></li>
-               </ul>
-              </div>
-              */
-			 %>
+<div class="container-fluid row">
+<div class="col-sm-6 col-md-6 col-lg-6 left">
+	<form name="mainForm" id='mainForm' action="#" url='\${cxt}/hxApi/do${tableVo.pojoName}' method="post">
+		<%for(col in tableVo.cols){%>
+			<%if(col.inids || !col.modify){continue;}%>
+			<div class="form-group">
+				<label for="${col.fieldName}">${col.comment}(${col.fieldName})</label> 
+				<input type="text" class="form-control" id="${col.fieldName}" name="${col.fieldName}" value="">
 			</div>
-			<a class="btn btn-danger btn-block floating-back" href="javascript:returnPage();">返回列表</a>
-			<button id="save" type="button" class="btn btn-danger btn-block floating-back view-hidden">保存</button>
-		</div>
-		<div class="panel-body floating-content">
-			<form id="edit-form" name="edit-form" class="row" onSubmit="return false">
-			<%for(col in tableVo.ids){%>
-				<input id="${col.fieldName}" name="${col.fieldName}" type="hidden" value="\${${tableVo.pojoNameVar}.${col.fieldName}}">
-			<%}%>
-				<ul class="form-wrap formgroup_wrap">
-				<%for(col in tableVo.cols){%>
-					<%if(col.inids || !col.modify){continue;}%>
-					<li>
-						<span class="form_span" title="${col.comment}"><%if(col.checkEmpty){%><em>*</em><%}%>${col.comment}:</span>
-						<input type="text" class="form-control" id="${col.fieldName}" name="${col.fieldName}" <%if(col.date){%> data-type="datetime" onclick="WdatePicker({'dateFmt':'yyyy-MM-dd'})" <%}%> value="\${${tableVo.pojoNameVar}.${col.fieldName}}" placeholder="请输入${col.comment}"/>
-						<p id='${col.fieldName}Tip' class="form_tips formalert"></p>
-					</li>
-				<%}%>	
-				</ul>
-			</form>
-		</div>
+		<%}%>
+		
+		<button type="button" class="btn btn-default ok">Submit</button>
+	</form>
+</div>
+<div class="col-sm-6 col-md-6 col-lg-6 right">
+	<div class="req">
+		<p>原始请求报文:</p>
+		<p class="initXml"></p>
 	</div>
+	<div class="req">
+		<p>请求报文:</p>
+		<p class="xml"></p>
+	</div>
+	<div class="res">
+		<p>返回报文:</p>
+		<p class="xml"></p>
+	</div>
+	<div class="res">
+		<p>解密后报文:</p>
+		<p class="uncryptedXml"></p>
+	</div>
+	<div>
+		<p  class="data"></p>
+	</div>
+	<div>
+		<p class="error"></p>
+	</div>
+</div>
+</div>
 </body>
+</html>

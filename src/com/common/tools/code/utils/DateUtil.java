@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.Random;
 import java.util.StringTokenizer;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 /**
  * 
  * @author lx
  *
  */
 public class DateUtil {
-	private static Logger logger = Logger.getLogger(DateUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(DateUtil.class);
 	
 	/**
 	 * 当前系统时间，所有现在时间必须使用此时间

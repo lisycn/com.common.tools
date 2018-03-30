@@ -12,6 +12,8 @@ public class LxTest {
 		BigDecimal b2 = new BigDecimal(333);
 		System.out.println(b1.add(b2));
 		System.out.println(b1.add(b2.negate()));
+		
+		System.out.println("NAP001ccybiycq20180328094116".length());
 	}
 
 }

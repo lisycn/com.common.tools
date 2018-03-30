@@ -12,15 +12,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import com.common.tools.code.utils.DateUtil;
 import com.common.tools.code.utils.StringUtils;
 
 public class JavaFile {
-	private Logger logger = Logger.getLogger(JavaFile.class);
+	private Logger logger = LoggerFactory.getLogger(JavaFile.class);
 	
-	private static final String LOGGER_IMPORT = "import org.apache.log4j.Logger;";
+	private static final String LOGGER_IMPORT = "import org.slf4j.Logger;import org.slf4j.LoggerFactory;";
 	
 	private String encoding = "utf-8";
 	private File file;
@@ -58,7 +58,7 @@ public class JavaFile {
 	}
 
 	private void initLogger() {
-		Pattern p = Pattern.compile("Logger\\s+logger\\s*=\\s*Logger.getLogger\\s*\\([^\\(\\)]+\\)\\s*;");
+		Pattern p = Pattern.compile("Logger\\s+logger\\s*=\\s*LoggerFactory.getLogger\\s*\\([^\\(\\)]+\\)\\s*;");
 		Matcher m = p.matcher(this.contentStr);
 		if (m.find()) {
 			this.hasLogger = true;
@@ -219,7 +219,7 @@ public class JavaFile {
 			
 			result.add(line.getContent());
 			if (!hasLogger && this.beginIndex >= line.getBeginIndex() && this.beginIndex <= line.getEndIndex()) {
-				result.add(StringUtils.getStartSpace(line.getContent()) + "    " + "private static Logger logger = Logger.getLogger(" + this.className + ".class);");
+				result.add(StringUtils.getStartSpace(line.getContent()) + "    " + "private static Logger logger = LoggerFactory.getLogger(" + this.className + ".class);");
 			}
 			if (!hasLoggerImport && this.packageIndex >= line.getBeginIndex() && this.packageIndex <= line.getEndIndex()) {
 				result.add(LOGGER_IMPORT);

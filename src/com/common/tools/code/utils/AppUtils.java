@@ -8,10 +8,10 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 public class AppUtils {
-	private static Logger logger = Logger.getLogger(AppUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(AppUtils.class);
 	/**
 	 * length位随机数
 	 * @param length

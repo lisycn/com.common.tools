@@ -3,7 +3,7 @@ package com.common.tools.code.writelog;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 /**
  * 括号
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class Bracket {
-	private static final Logger logger = Logger.getLogger(Bracket.class);
+	private static final Logger logger = LoggerFactory.getLogger(Bracket.class);
 	
 	/**
 	 * 

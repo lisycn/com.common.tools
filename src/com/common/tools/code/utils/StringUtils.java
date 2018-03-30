@@ -8,11 +8,11 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 
 public class StringUtils {
-	private static Logger logger = Logger.getLogger(StringUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(StringUtils.class);
 	
 	/**
 	 * 获取字符串前面的空格,缩进等

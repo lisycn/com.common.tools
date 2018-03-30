@@ -29,7 +29,7 @@ public class CodeUtils{
 		if (src == null) {
 			return "";
 		}
-		src = src.toLowerCase();
+		//src = src.toLowerCase();
 		StringBuffer sb = new StringBuffer();
 		char[] arr = src.toCharArray();
 		

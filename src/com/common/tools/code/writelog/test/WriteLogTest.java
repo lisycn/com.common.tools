@@ -3,10 +3,10 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 public class WriteLogTest {
-    private static Logger logger = Logger.getLogger(WriteLogTest.class);
+    private static Logger logger = LoggerFactory.getLogger(WriteLogTest.class);
 	private int returnA = 0;
 	public void aaa(String aa,int bb){
 	    logger.debug("进入方法,WriteLogTest.aaa(java.lang.String,int)");

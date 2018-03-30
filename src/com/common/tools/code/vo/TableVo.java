@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 import com.common.tools.code.utils.StringUtils;
 
@@ -13,7 +13,7 @@ import com.common.tools.code.utils.StringUtils;
  * @author lx
  */
 public class TableVo {
-	private static Logger logger = Logger.getLogger(TableVo.class);
+	private static Logger logger = LoggerFactory.getLogger(TableVo.class);
 	
 	private String tableName;
 	private String pojoName;

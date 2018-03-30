@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 import org.beetl.core.Configuration;
 import org.beetl.core.GroupTemplate;
 import org.beetl.core.Template;
@@ -51,7 +51,7 @@ import com.common.tools.code.vo.TableVo;
  * @author lx
  */
 public abstract class SimpleADMS {
-	private static Logger logger = Logger.getLogger(SimpleADMS.class);
+	private static Logger logger = LoggerFactory.getLogger(SimpleADMS.class);
 	
 	/**配置文件,从classpath开始*/
 	public static final String CONFIG_FILE = "com/common/tools/code/simpleadms/config/adms.properties";
@@ -85,8 +85,8 @@ public abstract class SimpleADMS {
 	private String encoding = "utf-8";
 	private static Properties config = null;
 	private GroupTemplate gt;
-	private boolean cutTablePrefix = true;//实体是否去掉表前缀,为true会去掉第一个'_'之前的部分
-	private boolean cutColumnPrefix = true;//实体是否去掉字段前缀，为true会去掉第一个'_'之前的部分
+//	private boolean cutTablePrefix = true;//实体是否去掉表前缀,为true会去掉第一个'_'之前的部分
+//	private boolean cutColumnPrefix = true;//实体是否去掉字段前缀，为true会去掉第一个'_'之前的部分
 	/**要生成的表*/
 	private List<TableVo> tableConfigList;
 	
@@ -99,9 +99,9 @@ public abstract class SimpleADMS {
 		return true;
 	}
 
-	public void setCutColumnPrefix(boolean cutColumnPrefix) {
-		this.cutColumnPrefix = cutColumnPrefix;
-	}
+//	public void setCutColumnPrefix(boolean cutColumnPrefix) {
+//		this.cutColumnPrefix = cutColumnPrefix;
+//	}
 	
 	public boolean isCutTablePrefix() {
 		try {
@@ -112,9 +112,9 @@ public abstract class SimpleADMS {
 		return true;
 	}
 
-	public void setCutTablePrefix(boolean cutTablePrefix) {
-		this.cutTablePrefix = cutTablePrefix;
-	}
+//	public void setCutTablePrefix(boolean cutTablePrefix) {
+//		this.cutTablePrefix = cutTablePrefix;
+//	}
 
 	public String getEncoding() {
 		return encoding;

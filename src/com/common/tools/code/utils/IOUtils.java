@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 public class IOUtils {
-	private static final Logger logger = Logger.getLogger(IOUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(IOUtils.class);
 	
 	public static void main(String[] args) throws IOException {
 		testRemoveFile();

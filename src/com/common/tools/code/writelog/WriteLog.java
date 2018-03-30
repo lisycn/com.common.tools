@@ -3,7 +3,7 @@ package com.common.tools.code.writelog;
 import java.io.File;
 import java.io.FilenameFilter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 
 /**
@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class WriteLog {
-	private Logger logger = Logger.getLogger(WriteLog.class);
+	private Logger logger = LoggerFactory.getLogger(WriteLog.class);
 	
 	/**
 	 * 

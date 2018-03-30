@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;import org.slf4j.LoggerFactory;
 
 public class TxtReader {
-	private static Logger logger = Logger.getLogger(TxtReader.class);
+	private static Logger logger = LoggerFactory.getLogger(TxtReader.class);
 	
 	public static void main(String[] args) throws Exception {
 		
